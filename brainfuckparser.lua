@@ -77,7 +77,7 @@ while idx <= #code do
 	elseif char == "." then
 		output = output .. string.char(memory[index])
 	elseif char == "," then
-		if inputindex <= #code then
+		if inputindex <= #input then
 			local c = input:sub(inputindex, inputindex)
 			memory[index] = string.byte(c)
 			inputindex = inputindex + 1
