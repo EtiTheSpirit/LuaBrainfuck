@@ -1,5 +1,6 @@
 -- Brainfuck parser by Xan
 
+local emulateOverflow = true
 local printMemoryInHex = true
 -- Brainfuck code
 local code = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
@@ -22,7 +23,16 @@ setmetatable(memory, {
 	end;
 	__newindex = function (tbl, idx, val)
 		if tbl ~= memory then tbl[idx] = val return end
-		assert(type(val) == "number" and (math.floor(val) == val) and (val >= 0) and (val < 256), "Error: Number value is incorrect (either not a number, not a whole number, < 0, or > 255 (Value Type: " .. type(val) .. " Value: " .. val .. ")")
+		if not emulateOverflow then
+			assert(type(val) == "number" and (math.floor(val) == val) and (val >= 0) and (val < 256), "Error: Number value is incorrect (either not a number, not a whole number, < 0, or > 255 (Value Type: " .. type(val) .. " Value: " .. val .. ")")
+		else
+			assert(type(val) == "number" and (math.floor(val) == val), "Error: Number value is incorrect (either not a number, or not a whole number)")
+			if val == -1 then
+				val = 255
+			elseif val == 256 then
+				val = 0
+			end
+		end
 		rawset(memory, idx, val)
 	end
 })
